@@ -1,0 +1,5 @@
+﻿Binaries
+Intermediate
+*.iml
+.idea/
+.git/
