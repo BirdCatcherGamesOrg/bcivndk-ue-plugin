@@ -13,7 +13,7 @@
 
 void FBCIVNDKSequencerModule::StartupModule()
 {
-	//BCILOG_STARTUP_MODULE(LogBCIVNDKSequencer, FBCIVNDKSequencerModule);
+	BCILOG_STARTUP_MODULE(LogBCIVNDKSequencer, FBCIVNDKSequencerModule);
 	ISequencerModule& SequencerModule = FModuleManager::LoadModuleChecked<ISequencerModule>("Sequencer");
 	TSharedRef<FBCIVNDKSequencerModule> SharedThis = AsShared();
 	CreateTrackEditorHandle = SequencerModule.RegisterTrackEditor(FOnCreateTrackEditor::CreateSPLambda(SharedThis, [WeakThis = SharedThis->AsWeak()] (TSharedRef<ISequencer> Sequencer)
@@ -27,7 +27,6 @@ void FBCIVNDKSequencerModule::StartupModule()
 		
 		if (!SharedThis->TrackEditor.IsValid())
 		{
-			//TSharedRef<FBCIVNDKSequencerTrackEditor> Editor = MakeShareable(new FBCIVNDKSequencerTrackEditor(Sequencer));
 			SharedThis->TrackEditor = MakeShared<FBCIVNDKSequencerTrackEditor>(Sequencer);
 		}
 		
@@ -39,7 +38,7 @@ void FBCIVNDKSequencerModule::StartupModule()
 
 void FBCIVNDKSequencerModule::ShutdownModule()
 {
-	//BCILOG_SHUTDOWN_MODULE(LogBCIVNDKSequencer, FBCIVNDKSequencerModule);
+	BCILOG_SHUTDOWN_MODULE(LogBCIVNDKSequencer, FBCIVNDKSequencerModule);
 	ISequencerModule& SequencerModule = FModuleManager::LoadModuleChecked<ISequencerModule>("Sequencer");
 	SequencerModule.UnRegisterTrackEditor(CreateTrackEditorHandle);
 }
