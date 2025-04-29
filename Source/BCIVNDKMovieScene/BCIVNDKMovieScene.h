@@ -31,13 +31,13 @@ private:
 template <typename SectionType>
 void FBCIVNDKMovieSceneModule::AddSceneSectionBridge(BridgeType Bridge)
 {
-	Bridges.Add(TSubclassOf<SectionType>()->GetFName(), Bridge);
+	Bridges.Add(SectionType::StaticClass()->GetFName(), Bridge);
 }
 
 template <typename SectionType>
 FBCIVNDKMovieSceneModule::BridgeType* FBCIVNDKMovieSceneModule::GetSceneSectionBridge()
 {
-	return Bridges.Find(TSubclassOf<SectionType>()->GetFName());
+	return Bridges.Find(SectionType::StaticClass()->GetFName());
 }
 
 template <typename SectionType>

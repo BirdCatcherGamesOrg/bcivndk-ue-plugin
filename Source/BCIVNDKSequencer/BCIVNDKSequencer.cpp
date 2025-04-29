@@ -15,23 +15,8 @@ void FBCIVNDKSequencerModule::StartupModule()
 {
 	BCILOG_STARTUP_MODULE(LogBCIVNDKSequencer, FBCIVNDKSequencerModule);
 	ISequencerModule& SequencerModule = FModuleManager::LoadModuleChecked<ISequencerModule>("Sequencer");
-	TSharedRef<FBCIVNDKSequencerModule> SharedThis = AsShared();
-	CreateTrackEditorHandle = SequencerModule.RegisterTrackEditor(FOnCreateTrackEditor::CreateSPLambda(SharedThis, [WeakThis = SharedThis->AsWeak()] (TSharedRef<ISequencer> Sequencer)
-	{
-		TSharedPtr<FBCIVNDKSequencerModule> SharedThis = WeakThis.Pin();
-		if (!SharedThis.IsValid())
-		{
-			BCILOG(LogBCIVNDKSequencer, Error, "Something went wrong with loading the track editor. I'm not as clever as I think I am with smart pointers.");
-			checkNoEntry();
-		}
-		
-		if (!SharedThis->TrackEditor.IsValid())
-		{
-			SharedThis->TrackEditor = MakeShared<FBCIVNDKSequencerTrackEditor>(Sequencer);
-		}
-		
-		return SharedThis->TrackEditor.ToSharedRef();
-	}));
+	
+	CreateTrackEditorHandle = SequencerModule.RegisterTrackEditor(FOnCreateTrackEditor::CreateStatic(&FBCIVNDKSequencerModule::CreateTrackEditor));
 	
 	SequencerModule.RegisterChannelInterface<FBCIVNDKMovieSceneControlChannel>();
 }
@@ -41,6 +26,11 @@ void FBCIVNDKSequencerModule::ShutdownModule()
 	BCILOG_SHUTDOWN_MODULE(LogBCIVNDKSequencer, FBCIVNDKSequencerModule);
 	ISequencerModule& SequencerModule = FModuleManager::LoadModuleChecked<ISequencerModule>("Sequencer");
 	SequencerModule.UnRegisterTrackEditor(CreateTrackEditorHandle);
+}
+
+TSharedRef<ISequencerTrackEditor> FBCIVNDKSequencerModule::CreateTrackEditor(TSharedRef<ISequencer> Sequencer)
+{
+	return MakeShared<FBCIVNDKSequencerTrackEditor>(Sequencer);
 }
 
 #undef LOCTEXT_NAMESPACE

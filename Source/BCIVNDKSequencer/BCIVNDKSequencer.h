@@ -12,8 +12,8 @@ public:
     virtual void ShutdownModule() override;
 
 private:
-
-    TSharedPtr<class FBCIVNDKSequencerTrackEditor> TrackEditor;
     
     FDelegateHandle CreateTrackEditorHandle;
+
+    static TSharedRef<class ISequencerTrackEditor> CreateTrackEditor(TSharedRef<class ISequencer> Sequencer);
 };
