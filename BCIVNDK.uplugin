@@ -43,6 +43,11 @@
 			"Name": "BCIVNDKWidget",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "BCIVNDKAssets",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
 		}
 	],
 	"Plugins": [
