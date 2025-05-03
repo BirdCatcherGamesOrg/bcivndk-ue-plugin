@@ -37,19 +37,19 @@ struct FBCIVNDKScriptPresentationTableRow : public FTableRowBase
 {
 	GENERATED_BODY()
 
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly)
 	FDataTableRowHandle SourceTableRow;
 
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly)
 	FString CachedScriptLineHash;
 
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly)
 	EBCIVNDKScriptPresentationTableRowVersion Version = EBCIVNDKScriptPresentationTableRowVersion::LATEST;
 
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly)
 	FBCIVNDKScriptPresentationTableRowData Data;
 	
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly)
 	FString SerializedData;
 	
 };
