@@ -50,14 +50,6 @@ struct FBCIVNDKMovieSceneExecutionToken final : IMovieSceneExecutionToken
 	}
 }; 
 
-/*
-FBCIVNDKMovieSceneEvalTemplate::FBCIVNDKMovieSceneEvalTemplate(const UBCIVNDKMovieSceneControlSection& Section)
-{
-	const TMovieSceneChannelData<const FBCIVNDKControlPayload> ControlData = Section.ControlPayload.GetData();
-	AddData<const FBCIVNDKControlPayload>(ControlData);
-}
-*/
-
 void FBCIVNDKMovieSceneEvalTemplate::EvaluateSwept(const FMovieSceneEvaluationOperand& Operand, const FMovieSceneContext& Context, const TRange<FFrameNumber>& SweptRange, const FPersistentEvaluationData& PersistentData, FMovieSceneExecutionTokens& ExecutionTokens) const
 {
 	// Don't allow events to fire when playback is in a stopped state. This can occur when stopping 
@@ -75,14 +67,18 @@ void FBCIVNDKMovieSceneEvalTemplate::EvaluateSwept(const FMovieSceneEvaluationOp
 		return;
 	}
 
+	// Do not use SweptRange, as SweptRange will consider subframe and apply a ceil to the lower bound.
+	// This means that we will not evaluate keyframes if the range doesn't fall on clean boundaries.
+	// In practice, this happens extremely frequently, resulting in an entire sequence to just not play at all.
+	// On the other hand, GetTraversedFrameNumberRange work with the intent in mind where the range (1.1 to 9.9)
+	// Would evaluate to [1, 10), which is necessary for this approach to using movie scenes to work.
+	TRange<FFrameNumber> RangeToCheck = Context.GetTraversedFrameNumberRange();
 	TArray<int32> KeyIndexes;
-	
 	if (bBackwards)
 	{
-		// Trigger events backwards
 		for (int32 KeyIndex = Broadcasts.Num() - 1; KeyIndex >= 0; --KeyIndex)
 		{
-			if (SweptRange.Contains(Broadcasts[KeyIndex].Time))
+			if (RangeToCheck.Contains(Broadcasts[KeyIndex].Time))
 			{
 				KeyIndexes.Add(KeyIndex);
 			}
@@ -90,10 +86,9 @@ void FBCIVNDKMovieSceneEvalTemplate::EvaluateSwept(const FMovieSceneEvaluationOp
 	}
 	else
 	{
-		// Trigger events forwards
 		for (int32 KeyIndex = 0; KeyIndex < Broadcasts.Num(); ++KeyIndex)
 		{
-			if (SweptRange.Contains(Broadcasts[KeyIndex].Time))
+			if (RangeToCheck.Contains(Broadcasts[KeyIndex].Time))
 			{
 				KeyIndexes.Add(KeyIndex);
 			}
